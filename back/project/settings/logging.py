@@ -34,16 +34,28 @@ logging.config.dictConfig({
         },
 
         # Add Handler for Sentry for `xxxx` and above
-        'sentry': {
-            'level': 'WARNING',
-            'class': 'raven.contrib.django.raven_compat.handlers.SentryHandler',
-        },
+        # 'sentry': {
+        #     'level': 'WARNING',
+        #     'class': 'raven.contrib.django.raven_compat.handlers.SentryHandler',
+        # },
 
         # Standard handler for django runserver
         'django.server': {
-            'level': 'DEBUG',
+            'level': 'ERROR',
             'class': 'logging.StreamHandler',
             'formatter': 'django.server',
+        },
+
+        'django.email_error': {
+            'level': 'ERROR',
+            'class': 'django.utils.log.AdminEmailHandler',
+            'formatter': 'django.server',
+        },
+
+        'django.file_error': {
+            'level': 'ERROR',
+            'class': 'logging.FileHandler',
+            'filename': '../django_err.log',
         },
 
         'null': {
@@ -53,17 +65,17 @@ logging.config.dictConfig({
     'loggers': {
         '': {
             'level': 'INFO',
-            'handlers': ['console', 'sentry'],
+            'handlers': ['console', 'django.email_error', 'django.file_error'],
             'propagate': False,
         },
         'django': {
             'level': 'INFO',
-            'handlers': ['console', 'sentry'],
+            'handlers': ['console',],
             'propagate': True,
         },
         'django.db.backends': {
             'level': 'INFO',
-            'handlers': ['console', 'sentry'],
+            'handlers': ['console',],
             'propagate': False,
         },
         # Default runserver request logging
@@ -72,39 +84,20 @@ logging.config.dictConfig({
             'handlers': ['django.server'],
             'propagate': False,
         },
-        # Управление логами сетевых соединений,
-        # которые заебывают в режиме DEBUG
         'urllib3.connectionpool': {
             'level': 'INFO',
-            'handlers': ['console', 'sentry'],
+            'handlers': ['console',],
             'propagate': False,
         },
-        'web3': {
-            'level': 'INFO',
-            'handlers': ['console', 'sentry'],
-            'propagate': False,
-        },
-        'sorl.thumbnail.base': {
-            'level': 'WARNING',
-            'handlers': ['console', 'sentry'],
-            'propagate': False,
-        },
-        'raven.contrib.django.client.DjangoClient': {
-            'level': 'WARNING',
-            'handlers': ['console', 'sentry'],
-            'propagate': False,
-        },
-        # меньше дублирования в консоль
-        'django.request': {
-            'level': 'ERROR',
-            'handlers': ['console', 'sentry'],
-            'propagate': False,
-        },
-        # # отправка писем
-        # 'herald.base': {
-        #     'level': 'DEBUG',
-        #     'handlers': ['console'],
+        # 'sorl.thumbnail.base': {
+        #     'level': 'WARNING',
+        #     'handlers': ['console',],
         #     'propagate': False,
         # },
+        'django.request': {
+            'level': 'ERROR',
+            'handlers': ['console', 'django.file_error', 'django.email_error'],
+            'propagate': False,
+        },
     },
 })

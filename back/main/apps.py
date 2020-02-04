@@ -9,5 +9,5 @@ class MainConfig(AppConfig):
 
     def ready(self):
 
-        # подключаю сигналы
+        # connect signals
         import main.signals

@@ -1,5 +1,4 @@
 import os
-from django.urls import reverse_lazy
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 ROOT_DIR = os.path.dirname(BASE_DIR)
@@ -50,36 +49,7 @@ CACHES = {
     },
 }
 
-RQ = {
-    'DEFAULT_RESULT_TTL': 50,
-}
-
-RQ_QUEUES = {
-    'default': {
-        'HOST': 'localhost',
-        'PORT': 6379,
-        'DB': 0,
-        'DEFAULT_TIMEOUT': 360,
-    },
-    'email': {
-        'HOST': 'localhost',
-        'PORT': 6379,
-        'DB': 0,
-    },
-    'low': {
-        'HOST': 'localhost',
-        'PORT': 6379,
-        'DB': 0,
-    }
-}
-
-RAVEN_CONFIG = {
-    'dsn': None,
-}
-
 INSTALLED_APPS = [
-    'raven.contrib.django.raven_compat',
-    'modeltranslation',
     'django.contrib.messages',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -87,50 +57,15 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.staticfiles',
     'logentry_admin',
-    'sorl.thumbnail',
     'rest_framework',
-    'django_rq',
     'constance',
     'constance.backends.database',
-    'rangefilter',
-    'admin_comments',
-    'django_cron',
     'project',
     'main',
-    'adminsortable2',  # fixme: должно быть после project до фикса django-admin-sortable2 issue #202 #206
-    'boolean_switch',
-    'news',
+    'adminsortable2',
 ]
-
-# отступ в пикселях для дочерних элементов в админке
-MPTT_ADMIN_LEVEL_INDENT = 20
-
-# кроны
-CRON_CLASSES = [
-    # 'main.cron.CronTest',
-]
-DJANGO_CRON_DELETE_LOGS_OLDER_THAN = 30
-FAILED_RUNS_CRONJOB_EMAIL_PREFIX = "[Server check]: "
-
-
-LOGIN_URL = reverse_lazy('main:home')
-LOGOUT_REDIRECT_URL = reverse_lazy('main:home')
-
 
 DEBUG = True
-THUMBNAIL_DEBUG = False
-THUMBNAIL_ENGINE = 'main.sorl.FixedEngine'  # исправление бага с превью для PNG mode=P
-
-THUMBNAIL_QUALITY = 85
-THUMBNAIL_PROGRESSIVE = False  # он всё равно не работает
-
-# REDIS
-THUMBNAIL_KVSTORE = 'sorl.thumbnail.kvstores.redis_kvstore.KVStore'
-THUMBNAIL_REDIS_DB = 1
-THUMBNAIL_REDIS_PASSWORD = ''
-THUMBNAIL_REDIS_HOST = '127.0.0.1'
-THUMBNAIL_REDIS_PORT = 6379
-
 
 MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -142,16 +77,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.gzip.GZipMiddleware',
     # 'debug_toolbar.middleware.DebugToolbarMiddleware',
-    # 'pipeline.middleware.MinifyHTMLMiddleware',
-    'project.middleware.force_default_lang.ForceDefaultLangMiddleware',  # использовать язык по умолчанию, а не HTTP_ACCEPT_LANGUAGE
-    # 'admin_reorder.middleware.ModelAdminReorder',
+    'project.middleware.force_default_lang.ForceDefaultLangMiddleware',
 ]
-
-
-# настройки против ip-спуфинга
-# XFF_STRICT = True  # Strict mode will stop all failing requests
-# XFF_ALWAYS_PROXY = True  # обрабатывать только запросы, прошедшие через Nginx
-# XFF_TRUSTED_PROXY_DEPTH = 1  # ровно один Nginx
 
 
 MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
@@ -159,11 +86,8 @@ MESSAGE_STORAGE = 'django.contrib.messages.storage.cookie.CookieStorage'
 ROOT_URLCONF = 'project.urls'
 
 TEMPLATES = [
-    # Стардартные шаблоны Django для админки и чужих приложений
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'project/templates')],
-        'APP_DIRS': False,
         'OPTIONS': {
             'context_processors': [
                 'django.contrib.auth.context_processors.auth',
@@ -225,7 +149,7 @@ DATABASE_ROUTERS = [
     # 'project.routers.Cbl4Router',
 ]
 
-# своя модель для пользователей
+# custom user model
 AUTH_USER_MODEL = 'main.User'
 
 
@@ -251,7 +175,7 @@ REST_FRAMEWORK = {
         'rest_framework.parsers.MultiPartParser'
     ),
     'DEFAULT_RENDERER_CLASSES': (
-        'main.drf.CustomJSONRenderer',  # чтобы сериалайзить Money и всякое такое
+        'main.drf.CustomJSONRenderer',
         'rest_framework.renderers.BrowsableAPIRenderer',
     ),
     'EXCEPTION_HANDLER': 'main.drf.full_details_exception_handler',
@@ -263,14 +187,11 @@ APPEND_SLASH = False
 
 TIME_ZONE = 'Europe/Moscow'
 
-USE_I18N = True
+USE_I18N = False
 LANGUAGES = (
     ('en', 'English'),
-    ('ru', 'Russian'),
 )
 LANGUAGE_CODE = 'en'
-MODELTRANSLATION_DEFAULT_LANGUAGE = LANGUAGE_CODE
-MODELTRANSLATION_AUTO_POPULATE = False
 
 LOCALE_PATHS = (os.path.join(ROOT_DIR, 'locale'),)
 

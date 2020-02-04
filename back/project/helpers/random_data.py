@@ -1,5 +1,4 @@
 import os
-import math
 import random
 import string
 import binascii
@@ -10,7 +9,6 @@ from datetime import timedelta
 import names
 
 from faker import Faker
-from PIL import Image, ImageDraw
 from transliterate import translit
 from django.utils.text import slugify
 
@@ -99,79 +97,6 @@ def generate_random_blog_post(lang=None):
         'annotation': fake.text(),
         'text': "\n".join(fake.paragraphs())
     }
-
-
-def generate_random_image(x, y):
-    """
-    Generate the shapes and colors, and draw them on the canvas
-    """
-    def _hsv_to_rgb(h, s, v):
-        if s == 0.0:
-            return v, v, v
-        i = int(h*6.0)
-        f = (h*6.0) - i
-        p = int(v*(1.0 - s))
-        q = int(v*(1.0 - s*f))
-        t = int(v*(1.0 - s*(1.0-f)))
-        i = i % 6
-        if i == 0:
-            return v, t, p
-        if i == 1:
-            return q, v, p
-        if i == 2:
-            return p, v, t
-        if i == 3:
-            return p, q, v
-        if i == 4:
-            return t, p, v
-        if i == 5:
-            return v, p, q
-
-    def _scale_coordinates(generator, image_width, image_height, side_length=50):
-        scaled_width = int(image_width / side_length) + 1
-        scaled_height = int(image_height / side_length) + 1
-        for coords in generator(scaled_width, scaled_height):
-            yield [(x * side_length, y * side_length) for (x, y) in coords]
-
-    def _generate_unit_triangles(image_width, image_height):
-        h = math.sin(math.pi / 3)
-        for x in range(-1, image_width):
-            for y in range(int(image_height / h)):
-                x_ = x if (y % 2 == 0) else x + 0.5
-                yield [(x_, y * h), (x_ + 1, y * h), (x_ + 0.5, (y + 1) * h)]
-                yield [(x_ + 1, y * h), (x_ + 1.5, (y + 1) * h), (x_ + 0.5, (y + 1) * h)]
-
-    def _generate_triangles(*args, **kwargs):
-        return _scale_coordinates(_generate_unit_triangles, *args, **kwargs)
-
-    def random_color(start, end):
-        while True:
-            chosen_d = random.uniform(0, 1)
-            yield RGBColor(
-                start.red - int((start.red - end.red) * chosen_d),
-                start.green - int((start.green - end.green) * chosen_d),
-                start.blue - int((start.blue - end.blue) * chosen_d)
-            )
-
-    im = Image.new(mode='RGB', size=(x, y))
-
-    huy = random.random()
-    huy2 = huy + 0.8
-    if huy2 > 1:
-        huy2 = huy2 - 1
-
-    c1 = _hsv_to_rgb(huy, 1, 120)
-    c2 = _hsv_to_rgb(huy2, 0.6, 250)
-
-    color1 = RGBColor(*c1)
-    color2 = RGBColor(*c2)
-
-    shapes = _generate_triangles(int(x * 1.2), int(y * 1.2), int(x / 5))
-    colors = random_color(color1, color2)
-    for shape, color in zip(shapes, colors):
-        ImageDraw.Draw(im).polygon(shape, fill=color)
-
-    return im
 
 
 def get_random_position():
