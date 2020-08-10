@@ -34,17 +34,22 @@ DATABASES = {
     }
 }
 
-CACHE_BACKEND = 'django.core.cache.backends.memcached.MemcachedCache'
-MEMCACHED_LOCATION = '127.0.0.1:11211'
+REDIS_HOST = 'localhost'
 CACHES = {
     'default': {
-        'BACKEND': CACHE_BACKEND,
-        'LOCATION': MEMCACHED_LOCATION,
+        'BACKEND': 'redis_cache.RedisCache',
+        'LOCATION': '%s:6379' % REDIS_HOST,
         'TIMEOUT': 3600 * 3,
+        'OPTIONS': {
+            'DB': 0,
+            'PASSWORD': '',
+            'PARSER_CLASS': 'redis.connection.HiredisParser',
+            'PICKLE_VERSION': 2,
+        },
     },
     'constance': {
-        'BACKEND': CACHE_BACKEND,
-        'LOCATION': MEMCACHED_LOCATION,
+        'BACKEND': 'redis_cache.RedisCache',
+        'LOCATION': '%s:6379' % REDIS_HOST,
         'TIMEOUT': 600,
     },
 }
