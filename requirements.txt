@@ -9,7 +9,7 @@ django-logentry-admin==1.0.4
 django-admin-sortable2==0.6.21
 django-appconf==1.0.2
 argon2-cffi==18.3.0
-djangorestframework==3.11.0
+djangorestframework==3.11.2
 Markdown==2.6.11
 requests==2.21.0
 django-redis-cache
