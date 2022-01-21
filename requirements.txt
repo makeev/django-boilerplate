@@ -16,7 +16,7 @@ django-redis-cache
 django-redis-sessions
 hiredis
 
-ipython==6.5.0
+ipython==7.16.3
 lorem==0.1.1
 names==0.3.0
 transliterate==1.10.2
